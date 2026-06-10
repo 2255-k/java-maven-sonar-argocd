@@ -30,17 +30,17 @@ pipeline {
         }
       }
     }
-  stage('Build and Push Docker Image') {
+ stage('Build and Push Docker Image') {
     steps {
         withCredentials([usernamePassword(
-            credentialsId: 'docker-cred',
+            credentialsId: 'docker-credentials',
             usernameVariable: 'DOCKER_USER',
             passwordVariable: 'DOCKER_PASS'
         )]) {
             sh '''
-                echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                docker build -t 2255-k/spring-boot-app:${BUILD_NUMBER} ./spring-boot-app
-                docker push 2255-k/spring-boot-app:${BUILD_NUMBER}
+                echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                docker build -t $DOCKER_USER/spring-boot-app:${BUILD_NUMBER} ./spring-boot-app
+                docker push $DOCKER_USER/spring-boot-app:${BUILD_NUMBER}
             '''
         }
     }
