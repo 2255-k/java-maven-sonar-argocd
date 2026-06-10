@@ -1,8 +1,7 @@
 pipeline {
-  agent {
+agent {
     docker {
         image 'maven:3.9.6-eclipse-temurin-17'
-        registryCredentialsId 'docker-cred'
         args '--entrypoint="" -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker --group-add 110'
     }
 }
@@ -40,7 +39,7 @@ pipeline {
             sh '''
                 echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                 docker build -t newus3r/spring-boot-app:latest ./spring-boot-app
-                docker push newus3r/spring-boot-app:${BUILD_NUMBER}
+                docker push newus3r/spring-boot-app:latest
             '''
         }
     }
@@ -55,7 +54,7 @@ pipeline {
         withCredentials([string(credentialsId: 'New PAT token', variable: 'GITHUB_TOKEN')]) {
             sh '''
                 git config --global --add safe.directory ${WORKSPACE}
-                git config user.email "abanalkishanunni@gmail.com@gmail.com"
+                git config user.email "abanalkishanunni@gmail.com"
                 git config user.name "2255-k"
                 sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
                 git add spring-boot-app-manifests/deployment.yml
