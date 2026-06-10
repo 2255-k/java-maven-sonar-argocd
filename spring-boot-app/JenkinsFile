@@ -33,7 +33,7 @@ pipeline {
  stage('Build and Push Docker Image') {
     steps {
         withCredentials([usernamePassword(
-            credentialsId: 'docker-credentials',
+            credentialsId: 'docker-cred',
             usernameVariable: 'DOCKER_USER',
             passwordVariable: 'DOCKER_PASS'
         )]) {
