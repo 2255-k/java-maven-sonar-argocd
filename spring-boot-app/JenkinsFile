@@ -63,7 +63,7 @@ pipeline {
                 git checkout origin/main -- spring-boot-app-manifests/deployment.yml
 
                 # Always restore placeholder from main before replacing
-                sed -i "s|image: 2255-k/spring-boot-app:.*|image: 2255-k/spring-boot-app:${BUILD_NUMBER}|g" spring-boot-app-manifests/deployment.yml
+                sed -i "s|image: newus3r/spring-boot-app:.*|image: newus3r/spring-boot-app:${BUILD_NUMBER}|g" spring-boot-app-manifests/deployment.yml
 
 
                 git add spring-boot-app-manifests/deployment.yml
