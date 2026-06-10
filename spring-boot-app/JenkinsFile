@@ -1,7 +1,8 @@
 pipeline {
-agent {
+  agent {
     docker {
         image 'maven:3.9.6-eclipse-temurin-17'
+        registryCredentialsId 'docker-cred'
         args '--entrypoint="" -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker --group-add 110'
     }
 }
@@ -24,7 +25,7 @@ agent {
         SONAR_URL = "http://18.204.23.117:9000"
       }
       steps {
-        withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
+        withCredentials([string(credentialsId: 'sonar-jenkins', variable: 'SONAR_AUTH_TOKEN')]) {
           sh 'cd spring-boot-app && mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
         }
       }
@@ -32,14 +33,14 @@ agent {
   stage('Build and Push Docker Image') {
     steps {
         withCredentials([usernamePassword(
-            credentialsId: 'docker-cred',    // ← was 'github-jenkins'
+            credentialsId: 'docker-cred',
             usernameVariable: 'DOCKER_USER',
             passwordVariable: 'DOCKER_PASS'
         )]) {
             sh '''
                 echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                docker build -t newus3r/spring-boot-app:latest ./spring-boot-app
-                docker push newus3r/spring-boot-app:latest
+                docker build -t 2255-k/spring-boot-app:${BUILD_NUMBER} ./spring-boot-app
+                docker push 2255-k/spring-boot-app:${BUILD_NUMBER}
             '''
         }
     }
@@ -51,12 +52,20 @@ agent {
         HOME = "${env.WORKSPACE}"
       }
       steps {
-        withCredentials([string(credentialsId: 'Git hub', variable: 'GITHUB_TOKEN')]) {
+        withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
             sh '''
                 git config --global --add safe.directory ${WORKSPACE}
                 git config user.email "abanalkishanunni@gmail.com"
-                git config user.name "2255-k"
-                sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
+                git config user.name "2255-K"
+
+                git checkout main
+                git pull https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} main
+                git checkout origin/main -- spring-boot-app-manifests/deployment.yml
+
+                # Always restore placeholder from main before replacing
+                sed -i "s|image: 2255-K/spring-boot-app:.*|image: 2255-K/spring-boot-app:${BUILD_NUMBER}|g" spring-boot-app-manifests/deployment.yml
+
+
                 git add spring-boot-app-manifests/deployment.yml
                 git commit -m "Update deployment image to version ${BUILD_NUMBER}"
                 git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
