@@ -56,14 +56,14 @@ pipeline {
             sh '''
                 git config --global --add safe.directory ${WORKSPACE}
                 git config user.email "abanalkishanunni@gmail.com"
-                git config user.name "2255-K"
+                git config user.name "2255-k"
 
                 git checkout main
                 git pull https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} main
                 git checkout origin/main -- spring-boot-app-manifests/deployment.yml
 
                 # Always restore placeholder from main before replacing
-                sed -i "s|image: 2255-K/spring-boot-app:.*|image: 2255-K/spring-boot-app:${BUILD_NUMBER}|g" spring-boot-app-manifests/deployment.yml
+                sed -i "s|image: 2255-k/spring-boot-app:.*|image: 2255-k/spring-boot-app:${BUILD_NUMBER}|g" spring-boot-app-manifests/deployment.yml
 
 
                 git add spring-boot-app-manifests/deployment.yml
