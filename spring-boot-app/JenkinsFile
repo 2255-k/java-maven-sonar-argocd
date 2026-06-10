@@ -51,7 +51,7 @@ agent {
         HOME = "${env.WORKSPACE}"
       }
       steps {
-        withCredentials([string(credentialsId: 'New PAT token', variable: 'GITHUB_TOKEN')]) {
+        withCredentials([string(credentialsId: 'Git hub', variable: 'GITHUB_TOKEN')]) {
             sh '''
                 git config --global --add safe.directory ${WORKSPACE}
                 git config user.email "abanalkishanunni@gmail.com"
