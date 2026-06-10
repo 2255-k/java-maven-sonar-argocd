@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: spring-boot-app
-        image: newus3r/ultimate-cicd:replaceImageTag   # ← fix username
+        image: newus3r/spring-boot-app:replaceImageTag   # ← fix username
         ports:
         - containerPort: 8080
