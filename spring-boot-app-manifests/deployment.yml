@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: spring-boot-app
-  namespace: default        # ← add this
+  namespace: default
   labels:
     app: spring-boot-app
 spec:
@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: spring-boot-app
-        image: 2255-k/ultimate-cicd:replaceImageTag
+        image: newus3r/ultimate-cicd:replaceImageTag   # ← fix username
         ports:
         - containerPort: 8080
